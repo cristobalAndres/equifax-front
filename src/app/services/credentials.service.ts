@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-const credentialsKey = 'user_nextaxes';
+const credentialsKey = 'user_equifax';
 
 /**
  * Provides storage for authentication credentials.
@@ -44,7 +44,8 @@ export class CredentialsService {
    */
   setCredentials(credentials?: any, remember: boolean = false) {
     this._credentials = credentials || null;
-
+    const storage = localStorage;
+      
     if (credentials) {
       const storage = localStorage;
       storage.setItem(credentialsKey, JSON.stringify(credentials));

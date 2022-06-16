@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup, FormBuilder, Validators, } from '@angular/forms';
 import { AuthService } from '../services/auth.services';
 
 @Component({
@@ -8,23 +9,35 @@ import { AuthService } from '../services/auth.services';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent implements OnInit {
+  form: FormGroup;
+  show = false;
 
   constructor(
     public authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
     ) { }
 
   ngOnInit(): void {
+    this.initForm();
   }
 
-  login() {
-    const user = {email: '12123', password: '123'};
-    this.authService.login(user).subscribe( data => {
-      console.log(data);
-      this.authService.saveUserStorage(data);
-      this.router.navigate([this.route.snapshot.queryParams.redirect || '/tickets'], { replaceUrl: true });
+  initForm() {
+    this.form = this.formBuilder.group({
+      email: [null, [Validators.required]],
+      password: [null, [Validators.required]],
     });
   }
 
+  login() {
+    const user = this.form.value;
+    this.show = false;
+    this.authService.login(user).subscribe( data => {
+      this.authService.saveUserStorage(data);
+      this.router.navigate([this.route.snapshot.queryParams.redirect || '/tickets'], { replaceUrl: true });
+    }, error => {
+    this.show = true;
+    });
+  }
 }
